@@ -1,0 +1,77 @@
+﻿@model Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.ProductModels.ProductCategoryViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+<div class="row">
+    <div class="col-4">
+        <h4>Detalji</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Id)
+            </dt>
+            <dd class="col-sm-12">
+                @Html.DisplayFor(model => model.Id)
+            </dd>
+            <dt class="col-sm-12">
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd class="col-sm-12">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Description)
+            </dt>
+            <dd class="col-sm-12">
+                @Html.DisplayFor(model => model.Description)
+            </dd>
+        </dl>
+    </div>
+    <div class="col-8">
+        @Html.ActionLink("Dodaj novu stavku", "AddProductItem", "Admin", new { categoryId = Model.Id }, new { @class = "btn btn-primary btn-sm" })
+      
+        
+        <style>
+            /* CSS to change cursor on hover for Bootstrap table rows */
+            .table-hover tbody tr:hover {
+                cursor: pointer;
+            }
+        </style>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Naziv</th>
+                    <th scope="col">Opis</th>
+                    <th scope="col">Cijena</th>
+                    <th scope="col">Kolicina</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.ProductItems)
+                {
+                    <tr cursor="pointer" onclick="window.location='@Url.Action("DetailsProductItem", "Admin", new { id = item.Id })';">
+                        <th scope="row">@item.Id</th>
+                        <td>@item.Name</td>
+                        <td>@item.Description</td>
+                        <td>@item.Price</td>
+                        <td>@item.Quantity</td>
+                        <td>
+                            @Html.ActionLink("Uredi", "EditProductItem", "Admin", new { id = item.Id }, new { @class = "btn btn-warning btn-sm" })
+                            @Html.ActionLink("Obriši", "DeleteProductItem", "Admin", new { id = item.Id }, new { @class = "btn btn-danger btn-sm" })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    <a asp-action="Index">Back to List</a>
+</div>
+
