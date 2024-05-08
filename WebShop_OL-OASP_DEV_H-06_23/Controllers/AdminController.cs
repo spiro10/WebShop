@@ -42,6 +42,26 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
             return View(productCategory);
         }
 
+        public async Task<IActionResult> Edit(long id)
+        {
+            var vm = await _productService.GetProductCategory(id);
+            var binding = mapper.Map<ProductCategoryUpdateBinding>(vm);
+            return View(binding);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(ProductCategoryUpdateBinding model)
+        {
+            await _productService.UpdateProductCategory(model);
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Delete(long id)
+        {
+            await _productService.DeleteProductCategory(id);
+            return RedirectToAction("Index");
+        }
+
         public async Task<IActionResult> AddProductItem(long categoryId)
         {
             var productItem = new ProductItemBinding
