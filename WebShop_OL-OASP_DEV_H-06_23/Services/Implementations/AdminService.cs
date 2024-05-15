@@ -17,6 +17,16 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
             this.db = db;
             this.mapper = mapper;
         }
+        /// <summary>
+        /// Get Company info
+        /// </summary>
+        /// <returns></returns>
+        public async Task<CompanyViewModel> GetCompany()
+        {
+            var dbo = await db.Companys.FirstOrDefaultAsync(y => y.Valid);
+            return mapper.Map<CompanyViewModel>(dbo);
+        }
+
 
         /// <summary>
         /// Updates an existing company's information in the database using the provided CompanyUpdateBinding model.

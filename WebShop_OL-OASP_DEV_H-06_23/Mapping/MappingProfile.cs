@@ -31,6 +31,9 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Mapping
             CreateMap<ProductItemUpdateBinding, ProductItem>();
             CreateMap<ProductItemViewModel, ProductItemUpdateBinding>();
             CreateMap<ProductCategoryViewModel, ProductCategoryUpdateBinding>();
+
+
+            CreateMap<CompanyViewModel, CompanyUpdateBinding>();
         }
     }
 }

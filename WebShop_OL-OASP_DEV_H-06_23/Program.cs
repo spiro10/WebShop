@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Shared_OL_OASP_DEV_H_06_23.Models.Dto;
 using WebShop_OL_OASP_DEV_H_06_23.Data;
@@ -16,8 +17,8 @@ namespace WebShop_OL_OASP_DEV_H_06_23
 
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-            
-            
+
+
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
@@ -25,17 +26,29 @@ namespace WebShop_OL_OASP_DEV_H_06_23
             builder.Services.Configure<AppSettings>(builder.Configuration);
             //var cfg = builder.Configuration.Get<AppSettings>();
 
-            
+
 
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 
-            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)                
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            builder.Services.AddDefaultIdentity<ApplicationUser>(
+    options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = true;
+                    options.Password.RequiredLength = 6;
+                    options.Password.RequiredUniqueChars = 0;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireUppercase = false;
 
 
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireDigit = false;
+                }).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
+            builder.Services.AddSingleton<IIdentitySetup, IdentitySetup>();
+
+            builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ICommonService, CommonService>();
             builder.Services.AddScoped<IAdminService, AdminService>();
@@ -70,8 +83,10 @@ namespace WebShop_OL_OASP_DEV_H_06_23
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Admin}/{action=Index}/{id?}");
+                pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
+
+            var identitySetup = app.Services.GetRequiredService<IIdentitySetup>();
 
             app.Run();
         }

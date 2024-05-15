@@ -1,28 +1,28 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using WebShop_OL_OASP_DEV_H_06_23.Models;
+using WebShop_OL_OASP_DEV_H_06_23.Services.Interfaces;
 
 namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IProductService productService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IProductService productService)
         {
             _logger = logger;
+            this.productService = productService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var response = await productService.GetProductCategories();
+            return View(response);
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
+      
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

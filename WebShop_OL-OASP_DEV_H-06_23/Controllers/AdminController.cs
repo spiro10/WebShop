@@ -1,21 +1,47 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared_OL_OASP_DEV_H_06_23.Models.Binding.CompanyModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.Binding.ProductModels;
+using Shared_OL_OASP_DEV_H_06_23.Models.Dto;
 using System.Diagnostics;
 using WebShop_OL_OASP_DEV_H_06_23.Models;
 using WebShop_OL_OASP_DEV_H_06_23.Services.Interfaces;
 
 namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
 {
+    [Authorize(Roles = Roles.Admin)]
     public class AdminController : Controller
     {
         private readonly IProductService _productService;
+        private readonly IAdminService adminService;
         private readonly IMapper mapper;
 
-        public AdminController(IProductService productService, IMapper mapper)
+        public AdminController(IProductService productService, IMapper mapper, IAdminService adminService)
         {
             _productService = productService;
             this.mapper = mapper;
+            this.adminService = adminService;
+        }
+
+        public async Task<IActionResult> Company()
+        {
+            var response = await adminService.GetCompany();
+            return View(response);
+        }
+
+        public async Task<IActionResult> CompanyEdit(long id)
+        {
+            var vm = await adminService.GetCompany();
+            var binding = mapper.Map<CompanyUpdateBinding>(vm);
+            return View(binding);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CompanyEdit(CompanyUpdateBinding model)
+        {
+            await adminService.UpdateCompany(model);
+            return RedirectToAction("Company", "Admin");
         }
 
         public async Task<IActionResult> Index()
@@ -35,7 +61,7 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
             await _productService.AddProductCategory(model);
             return RedirectToAction("Index");
         }
-
+        [AllowAnonymous]
         public async Task<IActionResult> Details(long id)
         {
             var productCategory = await _productService.GetProductCategory(id);
@@ -91,7 +117,7 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
             await _productService.UpdateProductItem(model);
             return RedirectToAction("Details", new { id = model.ProductCategoryId});
         }
-
+        [AllowAnonymous]
         public async Task<IActionResult> DetailsProductItem(long id)
         {
             var productItem = await _productService.GetProductItem(id);
