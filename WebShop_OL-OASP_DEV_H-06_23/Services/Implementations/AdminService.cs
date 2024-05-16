@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Shared_OL_OASP_DEV_H_06_23.Models.Binding.Common;
 using Shared_OL_OASP_DEV_H_06_23.Models.Binding.CompanyModels;
+using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.Common;
 using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.CompanyModels;
 using WebShop_OL_OASP_DEV_H_06_23.Data;
 using WebShop_OL_OASP_DEV_H_06_23.Models.Dbo.Common;
@@ -43,18 +44,9 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
             var dbo = await db.Companys.Include(x => x.Address)
                 .FirstOrDefaultAsync(y => y.Valid);
             mapper.Map(model, dbo);
-            UpdateAddress(model.Address);
             await db.SaveChangesAsync();
             return mapper.Map<CompanyViewModel>(dbo);
         }
-
-        public async Task UpdateAddress(AddressUpdateBinding model)
-        {
-            var dbo = await db.Addresss.FirstOrDefaultAsync(x => model.Id == x.Id);
-            mapper.Map(model, dbo);
-            await db.SaveChangesAsync();
-        }
-
 
     }
 }

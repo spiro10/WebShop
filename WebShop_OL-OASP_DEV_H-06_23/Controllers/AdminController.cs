@@ -8,6 +8,7 @@ using Shared_OL_OASP_DEV_H_06_23.Models.Binding.ProductModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.Dto;
 using System.Diagnostics;
 using WebShop_OL_OASP_DEV_H_06_23.Models;
+using WebShop_OL_OASP_DEV_H_06_23.Models.Dbo.Common;
 using WebShop_OL_OASP_DEV_H_06_23.Services.Interfaces;
 
 namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
@@ -32,11 +33,11 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
             return View(response);
         }
 
-        public async Task<IActionResult> CompanyEdit(long addressId)
+        public async Task<IActionResult> CompanyEdit()
         {
             var vm = await adminService.GetCompany();
             var binding = mapper.Map<CompanyUpdateBinding>(vm);
-            binding.AddressId = addressId;
+            
             return View(binding);
         }
 

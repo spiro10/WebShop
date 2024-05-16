@@ -22,18 +22,21 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Mapping
             CreateMap<AddressViewModel, AddressUpdateBinding>();
             CreateMap<AddressUpdateBinding, Address>();
             CreateMap<Address, AddressViewModel>();
+            CreateMap<Address, AddressUpdateBinding>();
+
             CreateMap<Company, CompanyViewModel>();
             CreateMap<CompanyUpdateBinding, Company>();
 
             
             CreateMap<ProductCategory, ProductCategoryViewModel>();
             CreateMap<ProductCategoryBinding, ProductCategory>();
+            CreateMap<ProductCategoryViewModel, ProductCategoryUpdateBinding>();
             CreateMap<ProductCategoryUpdateBinding, ProductCategory>();
+
             CreateMap<ProductItem, ProductItemViewModel>();
             CreateMap<ProductItemBinding, ProductItem>();
             CreateMap<ProductItemUpdateBinding, ProductItem>();
             CreateMap<ProductItemViewModel, ProductItemUpdateBinding>();
-            CreateMap<ProductCategoryViewModel, ProductCategoryUpdateBinding>();
 
 
             CreateMap<CompanyViewModel, CompanyUpdateBinding>();

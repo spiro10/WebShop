@@ -1,5 +1,6 @@
 ﻿using Shared_OL_OASP_DEV_H_06_23.Models.Binding.Common;
 using Shared_OL_OASP_DEV_H_06_23.Models.Binding.CompanyModels;
+using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.Common;
 using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.CompanyModels;
 
 namespace WebShop_OL_OASP_DEV_H_06_23.Services.Interfaces
@@ -8,6 +9,6 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Interfaces
     {
         Task<CompanyViewModel> UpdateCompany(CompanyUpdateBinding model);
         Task<CompanyViewModel> GetCompany();
-        Task UpdateAddress(AddressUpdateBinding model);
+       
     }
 }
