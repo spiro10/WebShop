@@ -1,6 +1,8 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol;
+using Shared_OL_OASP_DEV_H_06_23.Models.Binding.Common;
 using Shared_OL_OASP_DEV_H_06_23.Models.Binding.CompanyModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.Binding.ProductModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.Dto;
@@ -30,10 +32,11 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
             return View(response);
         }
 
-        public async Task<IActionResult> CompanyEdit(long id)
+        public async Task<IActionResult> CompanyEdit(long addressId)
         {
             var vm = await adminService.GetCompany();
             var binding = mapper.Map<CompanyUpdateBinding>(vm);
+            binding.AddressId = addressId;
             return View(binding);
         }
 

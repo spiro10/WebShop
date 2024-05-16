@@ -159,6 +159,26 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
             return mapper.Map<ProductItemViewModel>(dbo);
         }
 
+        public async Task<List<ProductItemViewModel>> GetProductItems(DateTime? notOlderThen = null)
+        {
+            if (!notOlderThen.HasValue)
+            {
+                notOlderThen = DateTime.Now;
+            }
+
+            var productItems = await db.ProductItems.Include(x=> x.ProductCategory)
+                .Where(x => x.Valid && x.Created < notOlderThen).ToListAsync();
+
+            if (!productItems.Any())
+            {
+                return new List<ProductItemViewModel>();
+            }
+
+            return productItems.Select(x => mapper.Map<ProductItemViewModel>(x)).ToList();
+        }
+
+
+
         /// <summary>
         /// Get product item by id
         /// </summary>

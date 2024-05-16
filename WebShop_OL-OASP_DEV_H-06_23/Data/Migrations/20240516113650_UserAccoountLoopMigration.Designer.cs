@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebShop_OL_OASP_DEV_H_06_23.Data;
 
@@ -11,9 +12,11 @@ using WebShop_OL_OASP_DEV_H_06_23.Data;
 namespace WebShop_OL_OASP_DEV_H_06_23.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240516113650_UserAccoountLoopMigration")]
+    partial class UserAccoountLoopMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -202,7 +205,7 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Data.Migrations
                             Id = 1L,
                             City = "Zagreb",
                             Country = "Hrvatska",
-                            Created = new DateTime(2024, 5, 16, 14, 11, 10, 226, DateTimeKind.Local).AddTicks(8134),
+                            Created = new DateTime(2024, 5, 16, 13, 36, 49, 663, DateTimeKind.Local).AddTicks(4695),
                             Number = "100",
                             Street = "Maksimirska",
                             Updated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -253,7 +256,7 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Data.Migrations
                         {
                             Id = 1L,
                             AddressId = 1L,
-                            Created = new DateTime(2024, 5, 16, 14, 11, 10, 226, DateTimeKind.Local).AddTicks(8321),
+                            Created = new DateTime(2024, 5, 16, 13, 36, 49, 663, DateTimeKind.Local).AddTicks(4864),
                             FullName = "Tvrtka d.o.o.",
                             ShortName = "Tvrtka",
                             Updated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),

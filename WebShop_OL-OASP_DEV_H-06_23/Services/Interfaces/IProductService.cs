@@ -68,5 +68,7 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Interfaces
         /// <param name="model"></param>
         /// <returns></returns>
         Task<ProductItemViewModel> UpdateProductItem(ProductItemUpdateBinding model);
+
+        Task<List<ProductItemViewModel>> GetProductItems(DateTime? notOlderThen = null);
     }
 }

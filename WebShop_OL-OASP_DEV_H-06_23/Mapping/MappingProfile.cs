@@ -5,9 +5,11 @@ using Shared_OL_OASP_DEV_H_06_23.Models.Binding.ProductModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.Common;
 using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.CompanyModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.ProductModels;
+using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.UserModels;
 using WebShop_OL_OASP_DEV_H_06_23.Models.Dbo.Common;
 using WebShop_OL_OASP_DEV_H_06_23.Models.Dbo.CompanyModels;
 using WebShop_OL_OASP_DEV_H_06_23.Models.Dbo.ProductModels;
+using WebShop_OL_OASP_DEV_H_06_23.Models.Dbo.UserModel;
 
 namespace WebShop_OL_OASP_DEV_H_06_23.Mapping
 {
@@ -17,6 +19,7 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Mapping
         {
 
             CreateMap<AddressBinding, Address>();
+            CreateMap<AddressViewModel, AddressUpdateBinding>();
             CreateMap<AddressUpdateBinding, Address>();
             CreateMap<Address, AddressViewModel>();
             CreateMap<Company, CompanyViewModel>();
@@ -34,6 +37,8 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Mapping
 
 
             CreateMap<CompanyViewModel, CompanyUpdateBinding>();
+            CreateMap<ApplicationUser, ApplicationUserViewModel>();
+
         }
     }
 }

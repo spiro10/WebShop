@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Shared_OL_OASP_DEV_H_06_23.Models.Binding.Common;
 using Shared_OL_OASP_DEV_H_06_23.Models.Binding.CompanyModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.CompanyModels;
 using WebShop_OL_OASP_DEV_H_06_23.Data;
+using WebShop_OL_OASP_DEV_H_06_23.Models.Dbo.Common;
 using WebShop_OL_OASP_DEV_H_06_23.Services.Interfaces;
 
 namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
@@ -23,7 +25,8 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
         /// <returns></returns>
         public async Task<CompanyViewModel> GetCompany()
         {
-            var dbo = await db.Companys.FirstOrDefaultAsync(y => y.Valid);
+            var dbo = await db.Companys.Include(x => x.Address)
+                .FirstOrDefaultAsync(y => y.Valid);
             return mapper.Map<CompanyViewModel>(dbo);
         }
 
@@ -37,10 +40,19 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
         /// <returns>A Task resulting in a CompanyViewModel representing the updated company.</returns>
         public async Task<CompanyViewModel> UpdateCompany(CompanyUpdateBinding model)
         {
-            var dbo = await db.Companys.FirstOrDefaultAsync(y => y.Valid);
+            var dbo = await db.Companys.Include(x => x.Address)
+                .FirstOrDefaultAsync(y => y.Valid);
             mapper.Map(model, dbo);
+            UpdateAddress(model.Address);
             await db.SaveChangesAsync();
             return mapper.Map<CompanyViewModel>(dbo);
+        }
+
+        public async Task UpdateAddress(AddressUpdateBinding model)
+        {
+            var dbo = await db.Addresss.FirstOrDefaultAsync(x => model.Id == x.Id);
+            mapper.Map(model, dbo);
+            await db.SaveChangesAsync();
         }
 
 

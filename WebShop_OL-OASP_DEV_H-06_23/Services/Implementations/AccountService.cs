@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Shared_OL_OASP_DEV_H_06_23.Models.Binding.AccountModels;
+using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.UserModels;
+using WebShop_OL_OASP_DEV_H_06_23.Data;
 using WebShop_OL_OASP_DEV_H_06_23.Models.Dbo.UserModel;
 using WebShop_OL_OASP_DEV_H_06_23.Services.Interfaces;
 
@@ -9,11 +13,15 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
     {
         private UserManager<ApplicationUser> userManager;
         private SignInManager<ApplicationUser> signInManager;
+        private ApplicationDbContext db;
+        private IMapper mapper;
 
-        public AccountService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AccountService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext db, IMapper mapper)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.db = db;
+            this.mapper = mapper;
         }
 
         public async Task<bool> CreateUser(RegistrationBinding model, string role)
@@ -29,7 +37,8 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
                 UserName = model.Email,
                 Email = model.Email,
                 FirstName = model.FirstName,
-                LastName = model.LastName
+                LastName = model.LastName,
+                RegistrationDate = DateTime.Now
             };
             user.EmailConfirmed = true;
 
@@ -45,6 +54,16 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
             return false;
         }
 
+
+        public async Task<List<ApplicationUserViewModel>> GetRegUsers(DateTime? notBefore = null)
+        {
+            if (!notBefore.HasValue)
+            {
+                notBefore = DateTime.Now.AddDays(-1);
+            }
+            var newUsers = await db.Users.Where(x => x.RegistrationDate < notBefore).ToListAsync();
+            return newUsers.Select(x => mapper.Map<ApplicationUserViewModel>(x)).ToList();
+        }
 
     }
 }
