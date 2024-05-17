@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Shared_OL_OASP_DEV_H_06_23.Models.Binding.Common;
 using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.Common;
 using WebShop_OL_OASP_DEV_H_06_23.Data;
@@ -36,6 +37,34 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
             await db.SaveChangesAsync();
             return mapper.Map<AddressViewModel>(dbo);
 
+        }
+
+        public async Task<List<AddressViewModel>> GetAddresses()
+        {
+            var dbos = await db.Addresss.Where(x => x.Valid).ToListAsync();
+            return dbos.Select(x => mapper.Map<AddressViewModel>(x)).ToList();
+
+        }
+
+        public async Task<AddressViewModel> GetAddress(long id)
+        {
+            var dbo = await db.Addresss.Where(x => x.Valid).FirstOrDefaultAsync(x => x.Id == id);
+            if (dbo == null)
+            {
+                return null;
+            }
+            return mapper.Map<AddressViewModel>(dbo);
+
+        }
+
+        public async Task<long> GenerateNewAddressId()
+        {
+            long newId = 1;
+            if (db.Addresss.Any())
+            {
+                newId = db.Addresss.OrderByDescending(x => x.Id).FirstOrDefault().Id + 1;
+            }
+            return newId;
         }
 
     }

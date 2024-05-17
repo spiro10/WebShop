@@ -18,13 +18,21 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
     {
         private readonly IProductService _productService;
         private readonly IAdminService adminService;
+        private readonly ICommonService commonService;
         private readonly IMapper mapper;
 
-        public AdminController(IProductService productService, IMapper mapper, IAdminService adminService)
+        public AdminController(IProductService productService, IMapper mapper, IAdminService adminService, ICommonService commonService)
         {
             _productService = productService;
             this.mapper = mapper;
             this.adminService = adminService;
+            this.commonService = commonService;
+        }
+
+        public async Task<IActionResult> Addresses()
+        {
+            var response = await commonService.GetAddresses();
+            return View(response);
         }
 
         public async Task<IActionResult> Company()
