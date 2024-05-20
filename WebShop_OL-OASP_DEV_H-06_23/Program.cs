@@ -53,6 +53,7 @@ namespace WebShop_OL_OASP_DEV_H_06_23
             builder.Services.AddScoped<ICommonService, CommonService>();
             builder.Services.AddScoped<IAdminService, AdminService>();
             builder.Services.AddSingleton<IHostedService, UserQueueProcessorService>();
+            builder.Services.AddScoped<IBuyerService, BuyerService>();
 
 
             // Add AutoMapper

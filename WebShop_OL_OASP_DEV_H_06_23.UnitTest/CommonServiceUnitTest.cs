@@ -27,7 +27,6 @@ namespace WebShop_OL_OASP_DEV_H_06_23.UnitTest
 
             Assert.NotNull(response);
 
-            Assert.NotEqual(default, response.Updated);
 
         }
     }

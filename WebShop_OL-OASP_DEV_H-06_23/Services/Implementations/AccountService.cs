@@ -65,5 +65,11 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
             return newUsers.Select(x => mapper.Map<ApplicationUserViewModel>(x)).ToList();
         }
 
+        //Zadatak: napraviti view sa detaljima buyera aka kupca
+        // zaseban view gdje korisnik moze pregledati vlastitu adresu
+        //Update usera, omoguciti unos adrese kupca
+
+
+
     }
 }

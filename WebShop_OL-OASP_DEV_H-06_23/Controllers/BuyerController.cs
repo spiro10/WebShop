@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Shared_OL_OASP_DEV_H_06_23.Models.Base.OrderModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.Binding.AccountModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.Binding.Common;
 using Shared_OL_OASP_DEV_H_06_23.Models.Dto;
@@ -12,11 +14,13 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
         private readonly IProductService productService;
         private readonly ICommonService commonService;
         private readonly IMapper mapper;
+        private readonly IBuyerService buyerService;
 
-        public BuyerController(IProductService productService, ICommonService commonService)
+        public BuyerController(IProductService productService, ICommonService commonService, IBuyerService buyerService)
         {
             this.productService = productService;
             this.commonService = commonService;
+            this.buyerService = buyerService;
         }
 
         public async Task<IActionResult> Index()
@@ -33,7 +37,7 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
             //{
             //    return View(mapper.Map<AddressUpdateBinding>(vm));
             //}
-            return View(mapper.Map<AddressUpdateBinding>(vm));
+            return View(vm); // Ispraviti ovo nesto ne valja
         }
         [HttpPost]
         public async Task<IActionResult> AddressEdit(AddressUpdateBinding model)
@@ -46,6 +50,12 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
         {
             var response = await productService.GetProductCategory(id);
             return View(response);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Order(OrderBinding model)
+        {
+            await buyerService.Order(model, User);
+            return View();
         }
     }
 }
