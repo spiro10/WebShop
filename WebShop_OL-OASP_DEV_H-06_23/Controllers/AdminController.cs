@@ -73,7 +73,7 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
             await _productService.AddProductCategory(model);
             return RedirectToAction("Index");
         }
-        [AllowAnonymous]
+        
         public async Task<IActionResult> Details(long id)
         {
             var productCategory = await _productService.GetProductCategory(id);

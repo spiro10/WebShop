@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Shared_OL_OASP_DEV_H_06_23.Models.Base.OrderModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.Binding.Common;
 using Shared_OL_OASP_DEV_H_06_23.Models.Binding.CompanyModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.Binding.ProductModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.Common;
 using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.CompanyModels;
+using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.OrderModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.ProductModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.UserModels;
 using WebShop_OL_OASP_DEV_H_06_23.Models.Dbo.Common;
@@ -41,6 +43,12 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Mapping
 
             CreateMap<CompanyViewModel, CompanyUpdateBinding>();
             CreateMap<ApplicationUser, ApplicationUserViewModel>();
+
+
+            CreateMap<OrderBinding, Order>();
+            CreateMap<Order, OrderViewModel>();
+            CreateMap<OrderItemBiding, OrderItem>();
+            CreateMap<OrderItem, OrderItemViewModel>();
 
         }
     }

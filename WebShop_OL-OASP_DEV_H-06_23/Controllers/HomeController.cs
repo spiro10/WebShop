@@ -29,6 +29,12 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> Details(long id)
+        {
+            var response = await productService.GetProductCategory(id);
+            return View(response);
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
