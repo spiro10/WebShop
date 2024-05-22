@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Shared_OL_OASP_DEV_H_06_23.Models.Base.OrderModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.Binding.OrderModels;
+using Shared_OL_OASP_DEV_H_06_23.Models.Dto;
 using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.OrderModels;
 using System.Security.Claims;
 using WebShop_OL_OASP_DEV_H_06_23.Data;
@@ -67,8 +68,35 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
         {
             var dbos = await db.Orders.Include(x => x.OrderItems)
                 .Include(x => x.OrderAddress)
+                .Include(x => x.Buyer)
                 .Where(x => x.Valid).ToListAsync();
             return dbos.Select(x => mapper.Map<OrderViewModel>(x)).ToList();
+        }
+
+        public async Task<List<OrderViewModel>> GetOrders(ApplicationUser buyer)
+        {
+            var dbos = await db.Orders.Include(x => x.OrderItems)
+                .Include(x => x.OrderAddress)
+                .Include(x => x.Buyer)
+                .Where(x => x.Valid && x.BuyerId == buyer.Id).ToListAsync();
+            return dbos.Select(x => mapper.Map<OrderViewModel>(x)).ToList();
+        }
+
+        public async Task<List<OrderViewModel>> GetOrders(ClaimsPrincipal user)
+        {
+            var appUser = await userManager.GetUserAsync(user);
+            var roles = await userManager.GetRolesAsync(appUser);
+
+            switch (roles[0])
+            {
+                case Roles.Admin:
+                   return await GetOrders();
+                case Roles.Buyer:
+                   return await GetOrders(appUser);
+                default:
+                    throw new NotImplementedException($"{roles[0]}  is not implemeneted");
+            }
+           
         }
 
         public async Task<OrderViewModel> GetOrder(long id)

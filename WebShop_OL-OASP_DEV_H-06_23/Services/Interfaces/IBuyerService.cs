@@ -13,6 +13,9 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Interfaces
         Task<OrderViewModel> Order(OrderBinding model, ClaimsPrincipal user);
         Task<OrderViewModel> UpdateOrder(OrderUpdateBinding model);
         Task<List<OrderViewModel>> GetOrders();
+        Task<List<OrderViewModel>> GetOrders(ApplicationUser buyer);
+        Task<List<OrderViewModel>> GetOrders(ClaimsPrincipal user);
+
         Task<OrderViewModel> GetOrder(long id);
         Task<OrderViewModel> DeleteOrder(long id);
     }
