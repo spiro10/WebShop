@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Newtonsoft.Json;
 using Shared_OL_OASP_DEV_H_06_23.Models.Base.OrderModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.Binding.AccountModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.Binding.Common;
@@ -56,6 +57,32 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
         {
             await buyerService.Order(model, User);
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddToOrderItem([FromBody] List<OrderItemBinding> orderItems)
+        {
+            var sessionOrderItems = HttpContext.Session.GetString("OrderItems");
+            List<OrderItemBinding> existingOrderItems = sessionOrderItems != null
+                ? JsonConvert.DeserializeObject<List<OrderItemBinding>>(sessionOrderItems)
+                : new List<OrderItemBinding>();
+
+            foreach(var orderItem in orderItems)
+            {
+                var existingItem = existingOrderItems.Find(item => item.ProductItemId == orderItem.ProductItemId);
+                if (existingItem != null)
+                {
+                    existingItem.Quantity += orderItem.Quantity;
+                }
+                else
+                {
+                    existingOrderItems.Add(orderItem);
+                }
+            }
+
+            HttpContext.Session.SetString("OrderItems", JsonConvert.SerializeObject(existingOrderItems));
+
+            return Json(new { msg = "OK" });
         }
     }
 }

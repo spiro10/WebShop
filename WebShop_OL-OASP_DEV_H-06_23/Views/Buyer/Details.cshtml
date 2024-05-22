@@ -64,8 +64,14 @@
             </tbody>
         </table>
     </div>
+    <input type="button" class="btn btn-success" value="Dodaj u košaricu" id="btn-order-final" />
 </div>
 
+<div id="order-form-container" style="display:none;">
+    <form id="order-form" method="post" action="/Buyer/AddToOrderItem">
+        <!-- Hidden inputs for order items will be appended here -->
+    </form>
+</div>
 <div class="modal fade" id="order-modal" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -144,5 +150,38 @@
         orderItems[productId] = orderQuantity;
         CloseModal();
     }
+
+    document.getElementById("btn-order-final").addEventListener("click", function () {
+        let orderItemsArray = [];
+
+        for (const [productId, quantity] of Object.entries(orderItems)) {
+            orderItemsArray.push({
+                ProductItemId: productId,
+                quantity: quantity
+            });
+        }
+
+        fetch('/Buyer/AddToOrderItem', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(orderItemsArray)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+                // Optionally, redirect or update the page based on the response
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+    })
 
 </script>
