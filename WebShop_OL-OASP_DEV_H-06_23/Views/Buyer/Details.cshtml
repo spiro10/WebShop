@@ -2,26 +2,16 @@
 
 @{
     ViewData["Title"] = "Details";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<h1>Details</h1>
 
 <div class="row">
     <div class="col-4">
-        <h4>ProductCategoryViewModel</h4>
+        <h4>Detalji</h4>
         <hr />
         <dl class="row">
-            </dd>
-            <dt class="col-sm-12">
-                @Html.DisplayNameFor(model => model.Name)
-            </dt>
             <dd class="col-sm-12">
                 @Html.DisplayFor(model => model.Name)
             </dd>
-            <dt class="col-sm-12">
-                @Html.DisplayNameFor(model => model.Description)
-            </dt>
             <dd class="col-sm-12">
                 @Html.DisplayFor(model => model.Description)
             </dd>
@@ -55,7 +45,7 @@
                                    att-product-quantity="@item.Quantity"
                                    id="order-btn-@item.Id"
                                    att-id="@item.Id"
-                                   onclick="AddItemToShoppingCart(this)"
+                                   onclick="AddItemToShoppingChart(this)"
                                    class="btn btn-primary"
                                    value="Odaberi" />
                         </td>
@@ -72,12 +62,13 @@
         <!-- Hidden inputs for order items will be appended here -->
     </form>
 </div>
+
 <div class="modal fade" id="order-modal" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="orderModalLabel">Detalji Narudžbe</h5>
-                <button type="button" onclick="CloseModal()" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -106,7 +97,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="CloseModal()" data-dismiss="modal">Zatvori</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</button>
                 <button type="button" class="btn btn-primary" onclick="ConfirmOrder()">Potvrdi</button>
             </div>
         </div>
@@ -114,17 +105,11 @@
 </div>
 
 <script>
-    let currentButton;
-    const orderItems = {};
+    let currentButton;  // Variable to store the reference to the button that opened the modal
+    const orderItems = {};  // Object to store order items
 
-
-
-    function CloseModal() {
-        $('#order-modal').modal('hide');
-    }
-
-    function AddItemToShoppingCart(e) {
-        currentButton = e;
+    function AddItemToShoppingChart(e) {
+        currentButton = e;  // Store the reference to the button that was clicked
 
         var productName = e.getAttribute("att-product-name");
         var productDescription = e.getAttribute("att-product-description");
@@ -135,32 +120,39 @@
         document.getElementById("product-description").value = productDescription;
         document.getElementById("product-price").value = productPrice;
         document.getElementById("product-quantity").value = productQuantity;
-        document.getElementById("order-quantity").value = 1;
+        document.getElementById("order-quantity").value = 1;  // Default quantity for order
 
         $('#order-modal').modal('show');
     }
+
     function ConfirmOrder() {
         var orderQuantity = document.getElementById("order-quantity").value;
         var productId = currentButton.getAttribute("att-id");
 
+        // Update the button that opened the modal
         if (currentButton) {
             currentButton.className = 'btn btn-success';
             currentButton.value = `Odabrano: ${orderQuantity}`;
         }
+
+        // Store the order item in the orderItems object
         orderItems[productId] = orderQuantity;
-        CloseModal();
+
+        $('#order-modal').modal('hide');
     }
 
-    document.getElementById("btn-order-final").addEventListener("click", function () {
+    document.getElementById('btn-order-final').addEventListener('click', function () {
+        // Create an array to store the order items
         let orderItemsArray = [];
 
         for (const [productId, quantity] of Object.entries(orderItems)) {
             orderItemsArray.push({
                 ProductItemId: productId,
-                quantity: quantity
+                Quantity: quantity
             });
         }
 
+        // Send the order items array to the server as JSON
         fetch('/Buyer/AddToOrderItem', {
             method: 'POST',
             headers: {
@@ -182,6 +174,5 @@
                 console.error('Error:', error);
             });
     });
-    })
 
 </script>
