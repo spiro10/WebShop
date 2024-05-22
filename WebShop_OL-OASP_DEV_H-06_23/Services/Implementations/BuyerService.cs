@@ -5,6 +5,7 @@ using Shared_OL_OASP_DEV_H_06_23.Models.Base.OrderModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.Binding.OrderModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.Dto;
 using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.OrderModels;
+using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.ProductModels;
 using System.Security.Claims;
 using WebShop_OL_OASP_DEV_H_06_23.Data;
 using WebShop_OL_OASP_DEV_H_06_23.Models.Dbo.OrderModels;
@@ -26,6 +27,12 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
             this.userManager = userManager;
         }
 
+        public async Task<List<ProductItemViewModel>> GetProductItems(List<long> productItemsIds)
+        {
+            var productItems = await db.ProductItems.Where(x=> productItemsIds.Contains(x.Id)).ToListAsync();
+            return productItems.Select(x=> mapper.Map<ProductItemViewModel>(x)).ToList();
+        }
+        
         public async Task<OrderViewModel> Order(OrderBinding model, ClaimsPrincipal user)
         {
             var applicatioUser = await userManager.GetUserAsync(user);
@@ -36,7 +43,7 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
         {
             var dbo = mapper.Map<Order>(model);
             var productItems = db.ProductItems
-                .Where(y => model.OrderItemIds.Select(y => y.ProductItemId).Contains(y.Id)).ToList();
+                .Where(y => model.OrderItems.Select(y => y.ProductItemId).Contains(y.Id)).ToList();
 
 
             foreach (var product in dbo.OrderItems)

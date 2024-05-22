@@ -27,6 +27,7 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Mapping
             CreateMap<AddressUpdateBinding, Address>();
             CreateMap<Address, AddressViewModel>();
             CreateMap<Address, AddressUpdateBinding>();
+            CreateMap<AddressViewModel, AddressBinding>();
 
             CreateMap<Company, CompanyViewModel>();
             CreateMap<CompanyUpdateBinding, Company>();

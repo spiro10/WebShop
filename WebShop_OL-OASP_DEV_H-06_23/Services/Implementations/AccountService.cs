@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Shared_OL_OASP_DEV_H_06_23.Models.Binding.AccountModels;
+using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.Common;
 using Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.UserModels;
+using System.Security.Claims;
 using WebShop_OL_OASP_DEV_H_06_23.Data;
 using WebShop_OL_OASP_DEV_H_06_23.Models.Dbo.UserModel;
 using WebShop_OL_OASP_DEV_H_06_23.Services.Interfaces;
@@ -69,7 +71,15 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
         // zaseban view gdje korisnik moze pregledati vlastitu adresu
         //Update usera, omoguciti unos adrese kupca
 
+        public async Task<AddressViewModel> GetUserAddress(ClaimsPrincipal user)
+        {
+            var appUser = await userManager.GetUserAsync(user);
+            var dboUser = await db.Users.Include(x => x.Address)
+                .FirstOrDefaultAsync(x => x.Id == appUser.Id);
 
+            var address = dboUser.Address;
+            return mapper.Map<AddressViewModel>(address);
+        }
 
     }
 }

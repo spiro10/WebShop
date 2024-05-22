@@ -7,6 +7,6 @@ namespace Shared_OL_OASP_DEV_H_06_23.Models.Base.OrderModels
     public class OrderBinding : OrderBase
     {
         public AddressBinding? OrderAddress { get; set; }
-        public List<OrderItemBinding> OrderItemIds { get; set; }
+        public List<OrderItemBinding> OrderItems { get; set; }
     }
 }

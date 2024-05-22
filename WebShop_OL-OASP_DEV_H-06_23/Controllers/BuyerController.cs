@@ -16,12 +16,15 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
         private readonly ICommonService commonService;
         private readonly IMapper mapper;
         private readonly IBuyerService buyerService;
+        private readonly IAccountService accountService;
 
-        public BuyerController(IProductService productService, ICommonService commonService, IBuyerService buyerService)
+
+        public BuyerController(IProductService productService, ICommonService commonService, IBuyerService buyerService, IAccountService accountService)
         {
             this.productService = productService;
             this.commonService = commonService;
             this.buyerService = buyerService;
+            this.accountService = accountService;
         }
 
         public async Task<IActionResult> Index()
@@ -57,6 +60,22 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
         {
             await buyerService.Order(model, User);
             return View();
+        }
+
+        public async Task<IActionResult> Order()
+        {
+            var sessionOrderItems = HttpContext.Session.GetString("OrderItems");
+            List<OrderItemBinding> existingOrderItems = sessionOrderItems != null
+                ? JsonConvert.DeserializeObject<List<OrderItemBinding>>(sessionOrderItems)
+                : new List<OrderItemBinding>();
+
+            var buyerAddress = await accountService.GetUserAddress(User);
+            OrderBinding orderBinding = new OrderBinding()
+            {
+                OrderAddress = buyerAddress != null ? mapper.Map<AddressBinding>(buyerAddress) : new AddressBinding(),
+                OrderItems = existingOrderItems
+            };
+            return View(orderBinding);
         }
 
         [HttpPost]

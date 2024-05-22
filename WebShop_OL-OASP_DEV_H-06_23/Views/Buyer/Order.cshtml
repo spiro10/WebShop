@@ -1,0 +1,81 @@
+﻿@model Shared_OL_OASP_DEV_H_06_23.Models.Base.OrderModels.OrderBinding
+@using WebShop_OL_OASP_DEV_H_06_23.Services.Interfaces
+@inject IBuyerService buyerService
+
+@{
+    ViewData["Title"] = "Order";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var productItems = await buyerService.GetProductItems(Model.OrderItems.Select(x => x.ProductItemId.Value).ToList());
+    var rowCounter = 1;
+}
+
+<h1>Order</h1>
+
+<h4>Delivery Address</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label asp-for="OrderAddress.Street" class="control-label"></label>
+            <input asp-for="OrderAddress.Street" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="OrderAddress.Number" class="control-label"></label>
+            <input asp-for="OrderAddress.Number" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="OrderAddress.City" class="control-label"></label>
+            <input asp-for="OrderAddress.City" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="OrderAddress.Country" class="control-label"></label>
+            <input asp-for="OrderAddress.Country" class="form-control" />
+        </div>
+    </div>
+</div>
+
+<h4>Selected Products</h4>
+<hr />
+<form asp-action="Order" method="post">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Naziv</th>
+                <th>Quantity</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.OrderItems.Count; i++)
+            {
+                var productItem = productItems.FirstOrDefault(y => y.Id == Model.OrderItems[i].ProductItemId);
+
+
+                <tr>
+                    <td>@rowCounter</td>
+                    <td>@productItem.Name</td>
+                    <td>
+                        <input type="text" name="OrderItems[@i].Quantity" value="@Model.OrderItems[i].Quantity" min="1" class="form-control" />
+                        <input type="hidden" name="OrderItems[@i].ProductItemId" value="@Model.OrderItems[i].ProductItemId" />
+                    </td>
+                    <td>
+                        <input type="checkbox" name="OrderItems[@i].Remove" value="true" />
+                    </td>
+                </tr>
+
+                rowCounter++;
+            }
+        </tbody>
+    </table>
+
+    <div class="form-group">
+        <input type="submit" value="Naruci" class="btn btn-primary" />
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
