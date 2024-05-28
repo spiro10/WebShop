@@ -186,7 +186,7 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
         /// <returns></returns>
         public async Task<ProductItemViewModel> GetProductItem(long id)
         {
-            var dbo = await db.ProductItems.FindAsync(id);
+            var dbo = await db.ProductItems.FirstOrDefaultAsync(x => x.Id == id);
             return mapper.Map<ProductItemViewModel>(dbo);
 
         }

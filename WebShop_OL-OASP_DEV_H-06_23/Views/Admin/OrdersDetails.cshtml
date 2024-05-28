@@ -1,0 +1,77 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using WebShop_OL_OASP_DEV_H_06_23.Data
+@using WebShop_OL_OASP_DEV_H_06_23.Models.Dbo.UserModel
+@using WebShop_OL_OASP_DEV_H_06_23.Services.Interfaces
+@inject IProductService productService
+@inject ApplicationDbContext db
+@inject UserManager<ApplicationUser> userMenager
+
+@model Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.OrderModels.OrderViewModel
+
+@{
+    ViewData["Title"] = "OrdersDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var user = db.Users.FirstOrDefault(x => x.Id == Model.Buyer.Id);
+    var email = user.Email;
+}
+
+
+
+<h1>OrdersDetails</h1>
+
+<div class="row">
+    <div class=("card", "col-6")  style="width: 18rem;">
+        <div class="card-header">
+            Podatci o kupcu
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">@Model.Buyer.FirstName</li>
+            <li class="list-group-item">@Model.Buyer.LastName</li>
+            <li class="list-group-item">@email</li>
+        </ul>
+
+    </div>
+
+    <div class="card" class=("card", "col-6") style="width: 18rem;">
+        <div class="card-header">
+            Adresa za dostavu
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">@Model.OrderAddress.Street @Model.OrderAddress.Number</li>
+            <li class="list-group-item">@Model.OrderAddress.City</li>
+            <li class="list-group-item">@Model.OrderAddress.Country</li>
+        </ul>
+    </div>
+</div>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Naziv</th>
+            <th scope="col">Opis</th>
+            <th scope="col">Cijena</th>
+            <th scope="col">Kolicina</th>
+            <th scope="col">Ukupno</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderItems)
+        {
+            var id = item.Id;
+            var product = await productService.GetProductItem(id);
+            <tr>
+                <th scope="row">@item.Id</th>
+                <td>@product.Name</td>
+                <td>@product.Description</td>
+                <td>@item.Price</td>
+                <td>@item.Quantity</td>
+                <td>@item.Total</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+

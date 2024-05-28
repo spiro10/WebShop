@@ -1,0 +1,63 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using WebShop_OL_OASP_DEV_H_06_23.Data
+@using WebShop_OL_OASP_DEV_H_06_23.Models.Dbo.UserModel
+@inject ApplicationDbContext db
+@inject UserManager<ApplicationUser> userMenager
+
+@model IEnumerable<Shared_OL_OASP_DEV_H_06_23.Models.ViewModel.OrderModels.OrderViewModel>
+
+@{
+    ViewData["Title"] = "Orders";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+
+}
+
+<h1>Orders</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Created)
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Message)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+
+
+            var user = db.Users.FirstOrDefault(x => x.Id == item.Buyer.Id);
+            var email = await userMenager.GetEmailAsync(user);
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Created)
+                </td>
+                <td>
+                    @email
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Message)
+                </td>
+                <td>
+                    @Html.ActionLink("Details", "OrdersDetails", new { id = item.Id }, new { @class = "btn btn-primary" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

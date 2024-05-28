@@ -29,10 +29,10 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
 
         public async Task<List<ProductItemViewModel>> GetProductItems(List<long> productItemsIds)
         {
-            var productItems = await db.ProductItems.Where(x=> productItemsIds.Contains(x.Id)).ToListAsync();
-            return productItems.Select(x=> mapper.Map<ProductItemViewModel>(x)).ToList();
+            var productItems = await db.ProductItems.Where(x => productItemsIds.Contains(x.Id)).ToListAsync();
+            return productItems.Select(x => mapper.Map<ProductItemViewModel>(x)).ToList();
         }
-        
+
         public async Task<OrderViewModel> Order(OrderBinding model, ClaimsPrincipal user)
         {
             var applicatioUser = await userManager.GetUserAsync(user);
@@ -97,18 +97,19 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
             switch (roles[0])
             {
                 case Roles.Admin:
-                   return await GetOrders();
+                    return await GetOrders();
                 case Roles.Buyer:
-                   return await GetOrders(appUser);
+                    return await GetOrders(appUser);
                 default:
                     throw new NotImplementedException($"{roles[0]}  is not implemeneted");
             }
-           
+
         }
 
         public async Task<OrderViewModel> GetOrder(long id)
         {
             var dbo = await db.Orders.Include(x => x.OrderItems)
+                .Include(x => x.Buyer)
                 .Include(x => x.OrderAddress)
                 .FirstOrDefaultAsync(x => x.Id == id);
             return mapper.Map<OrderViewModel>(dbo);

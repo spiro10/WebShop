@@ -1,107 +1,134 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 using Shared_OL_OASP_DEV_H_06_23.Models.Base.OrderModels;
-using Shared_OL_OASP_DEV_H_06_23.Models.Binding.AccountModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.Binding.Common;
+using Shared_OL_OASP_DEV_H_06_23.Models.Binding.OrderModels;
 using Shared_OL_OASP_DEV_H_06_23.Models.Dto;
+using WebShop_OL_OASP_DEV_H_06_23.Models.Dbo.OrderModels;
 using WebShop_OL_OASP_DEV_H_06_23.Services.Interfaces;
 
 namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
 {
+    [Authorize(Roles = Roles.Buyer)]
     public class BuyerController : Controller
     {
-        private readonly IProductService productService;
-        private readonly ICommonService commonService;
-        private readonly IMapper mapper;
-        private readonly IBuyerService buyerService;
-        private readonly IAccountService accountService;
 
+        private readonly IProductService _productService;
+        private readonly IBuyerService _buyerService;
+        private readonly IAccountService _accountService;
+        private readonly IMapper _mapper;
 
-        public BuyerController(IProductService productService, ICommonService commonService, IBuyerService buyerService, IAccountService accountService)
+        public BuyerController(IProductService productService, IBuyerService buyerService,
+            IAccountService accountService, IMapper mapper)
         {
-            this.productService = productService;
-            this.commonService = commonService;
-            this.buyerService = buyerService;
-            this.accountService = accountService;
-        }
 
-        public async Task<IActionResult> Index()
-        {
-            var response = await productService.GetProductCategories();
-            return View(response);
-        }
-
-        public async Task<IActionResult> AddressEdit(long id)
-        {
-            //AddressUpdateBinding response = new AddressUpdateBinding { Id = id };
-            var vm = await commonService.GetAddress(id);
-            //if (mapper.Map<AddressUpdateBinding>(vm) != null)
-            //{
-            //    return View(mapper.Map<AddressUpdateBinding>(vm));
-            //}
-            return View(vm); // Ispraviti ovo nesto ne valja
-        }
-        [HttpPost]
-        public async Task<IActionResult> AddressEdit(AddressUpdateBinding model)
-        {
-            await commonService.UpdateAddress(model);
-            return RedirectToAction("Index", "Home");
-        }
-
-        public async Task<IActionResult> Details(long id)
-        {
-            var response = await productService.GetProductCategory(id);
-            return View(response);
-        }
-        [HttpPost]
-        public async Task<IActionResult> Order(OrderBinding model)
-        {
-            await buyerService.Order(model, User);
-            return View();
+            _productService = productService;
+            _buyerService = buyerService;
+            _accountService = accountService;
+            _mapper = mapper;
         }
 
         public async Task<IActionResult> Order()
         {
             var sessionOrderItems = HttpContext.Session.GetString("OrderItems");
             List<OrderItemBinding> existingOrderItems = sessionOrderItems != null
-                ? JsonConvert.DeserializeObject<List<OrderItemBinding>>(sessionOrderItems)
-                : new List<OrderItemBinding>();
+     ? JsonConvert.DeserializeObject<List<OrderItemBinding>>(sessionOrderItems)
+     : new List<OrderItemBinding>();
 
-            var buyerAddress = await accountService.GetUserAddress(User);
-            OrderBinding orderBinding = new OrderBinding()
+
+            var buyerAddress = await _accountService.GetUserAddress(User);
+            OrderBinding orderBinding = new OrderBinding
             {
-                OrderAddress = buyerAddress != null ? mapper.Map<AddressBinding>(buyerAddress) : new AddressBinding(),
+                OrderAddress = buyerAddress != null ? _mapper.Map<AddressBinding>(buyerAddress) : new AddressBinding(),
                 OrderItems = existingOrderItems
             };
+
+
+
             return View(orderBinding);
         }
+
+
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> Order(OrderBinding model)
+        {
+            var order = await _buyerService.Order(model, User);
+
+            return RedirectToAction("Index"/*, new { orderId = order.Id }*/);
+        }
+
+        public async Task<IActionResult> MyOrder(long orderId)
+        {
+            var order = await _buyerService.GetOrder(orderId);
+            return View(order);
+        }
+
+
+        public async Task<IActionResult> MyOrders()
+        {
+            var orders = await _buyerService.GetOrders(User);
+            return View(orders);
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var model = await _productService.GetProductCategories();
+            return View(model);
+        }
+
+
+        //public async Task<IActionResult> CancelOrder(long orderId)
+        //{
+        //    var model = await _buyerService.CancelOrder(orderId);
+        //    return RedirectToAction("MyOrders");
+        //}
+
+        public async Task<IActionResult> Details(long id)
+        {
+            var productCategory = await _productService.GetProductCategory(id);
+            return View(productCategory);
+        }
+
+
+
+
 
         [HttpPost]
         public async Task<IActionResult> AddToOrderItem([FromBody] List<OrderItemBinding> orderItems)
         {
+            // Retrieve the existing session list of OrderItemBiding
             var sessionOrderItems = HttpContext.Session.GetString("OrderItems");
             List<OrderItemBinding> existingOrderItems = sessionOrderItems != null
                 ? JsonConvert.DeserializeObject<List<OrderItemBinding>>(sessionOrderItems)
                 : new List<OrderItemBinding>();
 
-            foreach(var orderItem in orderItems)
+            // Update the session list with the new order items
+            foreach (var orderItem in orderItems)
             {
                 var existingItem = existingOrderItems.Find(item => item.ProductItemId == orderItem.ProductItemId);
                 if (existingItem != null)
                 {
+                    // Update the quantity of the existing item
                     existingItem.Quantity += orderItem.Quantity;
                 }
                 else
                 {
+                    // Add the new item to the list
                     existingOrderItems.Add(orderItem);
                 }
             }
 
+            // Save the updated list back to the session
             HttpContext.Session.SetString("OrderItems", JsonConvert.SerializeObject(existingOrderItems));
 
-            return Json(new { msg = "OK" });
+            return Json(new { msg = "Ok" });
         }
+
+
     }
 }

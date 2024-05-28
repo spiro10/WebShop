@@ -19,14 +19,16 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
         private readonly IProductService _productService;
         private readonly IAdminService adminService;
         private readonly ICommonService commonService;
+        private readonly IBuyerService buyerService;
         private readonly IMapper mapper;
 
-        public AdminController(IProductService productService, IMapper mapper, IAdminService adminService, ICommonService commonService)
+        public AdminController(IProductService productService, IMapper mapper, IAdminService adminService, ICommonService commonService, IBuyerService buyerService)
         {
             _productService = productService;
             this.mapper = mapper;
             this.adminService = adminService;
             this.commonService = commonService;
+            this.buyerService = buyerService;
         }
 
         public async Task<IActionResult> Addresses()
@@ -143,5 +145,16 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
             return RedirectToAction("Details", new { id = productItem.ProductCategoryId });
         }
 
+        public async Task<IActionResult> Orders()
+        {
+            var orders = await buyerService.GetOrders();
+            return View(orders);
+        }
+
+        public async Task<IActionResult> OrdersDetails(long id)
+        {
+            var order = await buyerService.GetOrder(id);
+            return View(order);
+        }
     }
 }
