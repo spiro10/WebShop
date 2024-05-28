@@ -24,5 +24,15 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Models.Dbo.OrderModels
         public long? OrderAddressId { get; set; }
         public ICollection<OrderItem>? OrderItems { get; set; }
 
+        public void CalcualteTotal()
+        {
+            if (OrderItems == null)
+            {
+                return;
+            }
+
+            Total = OrderItems.Select(y => y.CalculateTotal()).Sum();
+        }
+
     }
 }

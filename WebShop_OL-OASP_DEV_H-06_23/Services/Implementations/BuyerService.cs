@@ -27,6 +27,31 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
             this.userManager = userManager;
         }
 
+
+        public async Task<OrderViewModel> CancelOrder(long id)
+        {
+            var dbo = await db.Orders.Include(x => x.OrderItems)
+                .ThenInclude(x => x.ProductItem)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            var productItems = db.ProductItems
+                        .Where(y => dbo.OrderItems.Select(y => y.ProductItemId).Contains(y.Id)).ToList();
+
+            foreach(var product in dbo.OrderItems)
+            {
+                var target = productItems.FirstOrDefault(x=> x.Id ==  product.ProductItemId);
+                if(target != null)
+                {
+                    target.Quantity += product.Quantity;
+                }
+            }
+
+            dbo.Valid = false;
+            await db.SaveChangesAsync();
+            return mapper.Map<OrderViewModel>(dbo);
+        }
+
+
         public async Task<List<ProductItemViewModel>> GetProductItems(List<long> productItemsIds)
         {
             var productItems = await db.ProductItems.Where(x => productItemsIds.Contains(x.Id)).ToListAsync();
@@ -51,12 +76,15 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
                 var target = productItems.FirstOrDefault(y => product.ProductItemId == y.Id);
                 if (target != null)
                 {
+                    target.Quantity -= product.Quantity;
                     product.Price = target.Price;
                 }
             }
 
 
             dbo.Buyer = buyer;
+            dbo.CalcualteTotal();
+
             db.Orders.Add(dbo);
             await db.SaveChangesAsync();
             return mapper.Map<OrderViewModel>(dbo);
@@ -109,6 +137,7 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Services.Implementations
         public async Task<OrderViewModel> GetOrder(long id)
         {
             var dbo = await db.Orders.Include(x => x.OrderItems)
+                .ThenInclude(x=> x.ProductItem)
                 .Include(x => x.Buyer)
                 .Include(x => x.OrderAddress)
                 .FirstOrDefaultAsync(x => x.Id == id);

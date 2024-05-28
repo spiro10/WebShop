@@ -59,13 +59,19 @@ namespace WebShop_OL_OASP_DEV_H_06_23.Controllers
         {
             var order = await _buyerService.Order(model, User);
 
-            return RedirectToAction("Index"/*, new { orderId = order.Id }*/);
+            return RedirectToAction("MyOrder", new { orderId = order.Id });
         }
 
         public async Task<IActionResult> MyOrder(long orderId)
         {
             var order = await _buyerService.GetOrder(orderId);
             return View(order);
+        }
+
+        public async Task<IActionResult> CancelOrder(long id)
+        {
+            await _buyerService.CancelOrder(id);
+            return RedirectToAction("MyOrders");
         }
 
 
